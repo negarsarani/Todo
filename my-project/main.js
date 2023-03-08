@@ -10,8 +10,9 @@ const deadline = document.getElementById('deadline');
 const form = document.getElementById('form');
 const nav = document.getElementById('nav');
 const aside = document.getElementById('aside');
-getItem() 
+
 let database = [];
+getItem();
 nav.addEventListener('click', (e) => navBtn(e));
 function navBtn(e) {
   let target = e.target;
@@ -40,7 +41,6 @@ form.addEventListener('submit', (e) => {
   form.reset();
 });
 
-// localStorage.setItem("state", JSON.stringify(database));
 let count = 0;
 function addToData() {
   count++;
@@ -51,40 +51,42 @@ function addToData() {
     statusInput: status.value,
     deadlineInput: deadline.value,
   };
-  // JSON.parse(localStorage.getItem("state"))
   database.push(obj);
-  setItem(database)
-//   localStorage.setItem('state', JSON.stringify(database));
-  // console.log(localStorage.getItem("state"));
-  // console.log(database);
+  setItem(database);
 }
 
 function renderData(item) {
   tbody.innerHTML = '';
-  //   JSON.parse(localStorage.getItem("state")).map((element) => {
-  //   });
+
   item.map((element) => {
     tbody.insertAdjacentHTML(
       'beforeend',
       `<tr id=${element.id} class="text-center">
-              <td class="py-4border-l-2 border-b-2 py-4">${element.taskInput}</td>
+              <td class="py-4border-l-2 border-b-2 py-4">${
+                element.taskInput
+              }</td>
               <td class="border-l-2 border-b-2">
               <span
-              class="bg-gray-200 w-max rounded-xl px-2 py-1 items-center"
+              class="
+              ${handlePriority(element.priorityInput)}
+               w-max rounded-xl px-2 py-1 items-center"
               >
               ${element.priorityInput}
         </span>
       </td>
       <td class="border-l-2 border-b-2">
       <span
-      class="bg-red-600 text-white w-max rounded-xl px-2 py-1 items-center"
+      class=" 
+      ${handleStatus(element.statusInput)}
+       text-white w-max rounded-xl px-2 py-1 items-center"
       >
       ${element.statusInput}
       </span>
       </td>
       <td class="border-l-2 border-b-2">${element.deadlineInput}</td>
       <td class="border-l-2 border-b-2">
-      <button class="bg-red-600 px-1 py-0 rounded">
+
+      <button class="bg-red-600 px-1 py-0 rounded" data-name='delete'>
       <ion-icon
       class="text-white text-center"
       data-id='${element.id}'
@@ -92,7 +94,7 @@ function renderData(item) {
       name="trash"
       ></ion-icon>
       </button>
-        <button class="bg-blue-600 px-1 py-0 rounded">
+        <button class="bg-blue-600 px-1 py-0 rounded" data-name="edit">
         <ion-icon
         class="text-white text-center"
         data-id="${element.id}"
@@ -100,8 +102,9 @@ function renderData(item) {
         name="pencil"
         ></ion-icon>
         </button>
-        <button class="bg-gray-500 px-1 py-0 rounded">
+        <button class="bg-gray-500 px-1 py-0 rounded" data-name="eye">
         <ion-icon
+        data-name="eye"
         class="text-white text-center"
         name="eye"
         ></ion-icon>
@@ -112,6 +115,51 @@ function renderData(item) {
     );
   });
 }
+
+function handlePriority(item) {
+  return item === 'High'
+    ? 'bg-red-500 text-white'
+    : item === 'Medium'
+    ? 'bg-yellow-500 '
+    : 'bg-gray-500';
+}
+function handleStatus(item) {
+  return item === 'Todo'
+    ? 'bg-red-500 '
+    : item === 'Doing'
+    ? 'bg-yellow-500 text-black '
+    : 'bg-green-500';
+}
+tbody.addEventListener('click', (e) => {
+  let target = e.target;
+//   let trId = +e.target.closest('tr').id;
+  if (target.dataset.name === 'delete') {
+    
+    console.log('del');
+
+  } else if (e.target.dataset.name === 'edit') {
+    console.log('edit');
+    
+  } else if (target.dataset.name === 'eye') {
+    console.log('eye');
+  }
+});
+
+
+function setItem(item) {
+  localStorage.setItem('items', JSON.stringify(item));
+}
+function getItem() {
+  const firstItem = localStorage.getItem('items');
+  if (firstItem) {
+    const parssedItems = JSON.parse(firstItem);
+    renderData(parssedItems);
+    database = parssedItems;
+  }
+}
+
+
+// localStorage.removeItem("items");
 
 ///editing
 // function editBtn(target) {
@@ -232,34 +280,6 @@ function renderData(item) {
 // }
 
 //delete & edit
-
-tbody.addEventListener('click', (e) => {
-  console.log(e.target);
-  let trId = +e.target.closest('tr').id;
-  if (e.target.dataset.name === 'delete') {
-    console.log('del');
-    // let del = JSON.parse(localStorage.getItem('state')).filter((item) => {
-    //   return item.id !== trId;
-    // });
-    // localStorage.setItem('state', JSON.stringify(del));
-    return renderData(database);
-  } else if (e.target.dataset.name === 'edit') {
-    editBtn(e.target);
-    // console.log("test");
-  }
-});
-function setItem(item) {
-    localStorage.setItem("items", JSON.stringify(item));
-  }
-  function getItem() {
-    const firstItem = localStorage.getItem("items");
-    if (firstItem) {
-      const parssedItems = JSON.parse(firstItem);
-      console.log(parssedItems);
-      renderData(parssedItems);
-      database = parssedItems;
-    }
-  }
 
 // function editModal(item1, item2, item3, item4, id) {
 //   let div = document.createElement('div');
