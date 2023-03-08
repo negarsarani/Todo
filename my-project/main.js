@@ -134,7 +134,6 @@ tbody.addEventListener('click', (e) => {
   let target = e.target;
 //   let trId = +e.target.closest('tr').id;
   if (target.dataset.name === 'delete') {
-    
     console.log('del');
 
   } else if (e.target.dataset.name === 'edit') {
