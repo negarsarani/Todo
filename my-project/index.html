@@ -10,17 +10,17 @@
 <body>
   <div class="flex flex-col justify-between">
     <!-- <div id="app"></div> -->
-    <nav id="nav" class="bg-indigo-700 h-12 flex justify-between items-center">
-      <div class="ml-3 mt-0 text-center">
+    <nav id="nav" class="bg-purple-800 p-3 sm:flex justify-between items-center">
+      <div class="ml-3  text-center flex  justify-center gap-1">
         <button class="cursor-pointer">
           <ion-icon class="text-2xl text-white" name="menu"></ion-icon>
         </button>
         <p class="text-white inline-block text-center">My To-Do Tasks</p>
       </div>
-      <div class="flex gap-5">
-        <div class="relative">
-          <input type="text" class="px-5 py-2 bg-indigo-200 rounded" placeholder="Search" />
-          <ion-icon class="text-center mt-3 justify-end text-white absolute left-0" name="search"></ion-icon>
+      <div class="flex gap-5 sm:pr-3 justify-center">
+        <div class="flex bg-purple-600 px-2  gap-1 rounded-md">
+          <div class="flex items-center justify-center"> <ion-icon class="text-center items-center justify-center text-white" name="search"></ion-icon></div>
+          <input type="text" class="  rounded bg-transparent outline-none text-white" placeholder="Search" />
         </div>
         <button data-id="filter" class="cursor-pointer">
           <ion-icon data-id="filter" class="text-white text-2xl" name="filter"></ion-icon>
@@ -40,102 +40,16 @@
           <td class="text-center border-l-2 border-b-2">Actions</td>
         </thead>
         <tbody id="tbody">
-           <tr class="text-center">
-            <td class="py-4border-l-2 border-b-2 py-4">Walk the dog</td>
-            <td class="border-l-2 border-b-2">
-              <span class="bg-gray-200 w-max rounded-xl px-2 py-1 items-center">
-                Low
-              </span>
-            </td>
-            <td class="border-l-2 border-b-2">
-              <span class="bg-red-600 text-white w-max rounded-xl px-2 py-1 items-center">
-                Todo
-              </span>
-            </td>
-            <td class="border-l-2 border-b-2"></td>
-            <td class="border-l-2 border-b-2">
-              <button class="bg-red-600 px-1 py-0 rounded">
-                <ion-icon class="text-white text-center" name="trash"></ion-icon>
-              </button>
-              <button class="bg-blue-600 px-1 py-0 rounded">
-                <ion-icon class="text-white text-center" name="pencil"></ion-icon>
-              </button>
-              <button class="bg-gray-500 px-1 py-0 rounded">
-                <ion-icon class="text-white text-center" name="eye"></ion-icon>
-              </button>
-            </td>
-          </tr>
-
-          <tr class="text-center">
-            <td class="py-4border-l-2 border-b-2 py-4">Walk the dog</td>
-            <td class="border-l-2 border-b-2">
-              <span class="bg-yellow-500 w-max rounded-xl px-2 py-1 items-center">
-                Medium
-              </span>
-            </td>
-            <td class="border-l-2 border-b-2">
-              <span class="bg-yellow-400 w-max rounded-xl px-2 py-1 items-center">
-                Doing
-              </span>
-            </td>
-            <td class="border-l-2 border-b-2"></td>
-            <td class="border-l-2 border-b-2">
-              <button class="bg-red-600 px-1 py-0 rounded">
-                <ion-icon class="text-white text-center" name="trash"></ion-icon>
-              </button>
-              <button class="bg-blue-600 px-1 py-0 rounded">
-                <ion-icon class="text-white text-center" name="pencil"></ion-icon>
-              </button>
-              <button class="bg-gray-500 px-1 py-0 rounded">
-                <ion-icon class="text-white text-center" name="eye"></ion-icon>
-              </button>
-            </td>
-          </tr>
-
-          <tr class="text-center">
-            <td class="py-4border-l-2 border-b-2 py-4">Walk the dog</td>
-            <td class="border-l-2 border-b-2">
-              <span class="bg-red-600 w-max rounded-xl px-2 py-1 items-center text-white">
-                High
-              </span>
-            </td>
-            <td class="border-l-2 border-b-2">
-              <span class="bg-green-600 text-white w-max rounded-xl px-2 py-1 items-center">
-                Done
-              </span>
-            </td>
-            <td class="border-l-2 border-b-2"></td>
-            <td class="border-l-2 border-b-2">
-              <button class="bg-red-600 px-1 py-0 rounded">
-                <ion-icon class="text-white text-center" name="trash"></ion-icon>
-              </button>
-              <button class="bg-blue-600 px-1 py-0 rounded">
-                <ion-icon class="text-white text-center" name="pencil"></ion-icon>
-              </button>
-              <button class="bg-gray-500 px-1 py-0 rounded">
-                <ion-icon class="text-white text-center" name="eye"></ion-icon>
-              </button>
-            </td>
-          </tr> 
           
         </tbody>
       </table>
-      <!-- <div class="flex">
-        <p>Rows per page:</p>
-        <div>
-          <p>All</p>
-          <ion-icon name="caret-down"></ion-icon>
-        </div>
-        <p>1-3 of 3</p>
-        <button><ion-icon name="chevron-back"></ion-icon></button>
-        <button><ion-icon name="chevron-forward"></ion-icon></button>
-      </div> -->
+
     </main>
     <div id="modal-box"
       class="invisible absolute inset-0 bg-gray-500 bg-opacity-80 flex items-center justify-center z-10">
-      <div class="flex flex-col w-6/12 bg-white relative">
+      <div class="flex p-4 flex-col w-6/12 bg-white relative">
         <form id="form">
-          <h1 class="font-bold p-4">New Task</h1>
+          <h1 class="font-bold pb-2 ">New Task</h1>
           <hr />
           <div class="">
             <label>
@@ -160,7 +74,7 @@
               <input id="deadline" type="date" name="trip-start" value="2023-03-06" min="2018-01-01" max="2024-03-06" />
             </div>
           </div>
-          <textarea class="border border-2 rounded m-3" placeholder="Details (Optional)"></textarea>
+          <textarea id="textarea" class="border border-2 rounded m-3" placeholder="Details (Optional)"></textarea>
           <div class="flex justify-between">
             <button data-id="cancel" type="submit" class="border border-2 rounded p-1">
               CANCEL

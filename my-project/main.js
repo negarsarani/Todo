@@ -1,17 +1,14 @@
 import './style.css';
 
 const modalBox = document.getElementById('modal-box');
-const datePicker = document.getElementById('date-picker');
 const tbody = document.getElementById('tbody');
-const task = document.getElementById('task-name');
-const priority = document.getElementById('priority');
-const status = document.getElementById('status');
-const deadline = document.getElementById('deadline');
 const form = document.getElementById('form');
 const nav = document.getElementById('nav');
 const aside = document.getElementById('aside');
 
 let database = [];
+let active;
+let isEdit = false;
 getItem();
 nav.addEventListener('click', (e) => navBtn(e));
 function navBtn(e) {
@@ -29,30 +26,35 @@ function openModal(item) {
   item.classList.remove('invisible');
 }
 
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.submitter.dataset.id === 'cancel') {
-    closeModal(modalBox);
-  } else if (e.submitter.dataset.id === 'save') {
-    addToData();
+function addToData(e) {
+  const target = e.target;
+  const [task, priority, status, deadline, desc] = Array.from(target.elements);
+  if (isEdit === false) {
+    const obj = {
+      id: Date.now(),
+      taskInput: task.value,
+      priorityInput: priority.value,
+      statusInput: status.value,
+      deadlineInput: deadline.value,
+      desc: desc.value,
+    };
+    database.push(obj);
+    setItem(database);
+  } else if (isEdit === true) {
+    database.forEach((item) => {
+      if (item.id === active) {
+        item.taskInput = task.value;
+        item.priorityInput = priority.value;
+        item.statusInput = status.value;
+        item.deadlineInput = deadline.value;
+        item.desc = desc.value;
+      }
+    });
+    isEdit = false;
     renderData(database);
-    closeModal(modalBox);
+    setItem(database);
+    active = '';
   }
-  form.reset();
-});
-
-let count = 0;
-function addToData() {
-  count++;
-  const obj = {
-    id: count,
-    taskInput: task.value,
-    priorityInput: priority.value,
-    statusInput: status.value,
-    deadlineInput: deadline.value,
-  };
-  database.push(obj);
-  setItem(database);
 }
 
 function renderData(item) {
@@ -61,15 +63,13 @@ function renderData(item) {
   item.map((element) => {
     tbody.insertAdjacentHTML(
       'beforeend',
-      `<tr id=${element.id} class="text-center">
-              <td class="py-4border-l-2 border-b-2 py-4">${
-                element.taskInput
-              }</td>
+      `<tr id=${element.id} class="text-center border">
+              <td class="border-l-2 border-b-2 py-4">${element.taskInput}</td>
               <td class="border-l-2 border-b-2">
               <span
               class="
               ${handlePriority(element.priorityInput)}
-               w-max rounded-xl px-2 py-1 items-center"
+            rounded-xl px-2 py-1 items-center"
               >
               ${element.priorityInput}
         </span>
@@ -83,10 +83,12 @@ function renderData(item) {
       ${element.statusInput}
       </span>
       </td>
-      <td class="border-l-2 border-b-2">${element.deadlineInput}</td>
-      <td class="border-l-2 border-b-2">
+      <td class="border-l-2 border-b-2 ">${element.deadlineInput}</td>
+      <td class="border  ">
 
-      <button class="bg-red-600 px-1 py-0 rounded" data-name='delete'>
+      <button class="bg-red-600 px-1 rounded" 
+      data-name='delete'
+       data-id="${element.id}">
       <ion-icon
       class="text-white text-center"
       data-id='${element.id}'
@@ -94,7 +96,9 @@ function renderData(item) {
       name="trash"
       ></ion-icon>
       </button>
-        <button class="bg-blue-600 px-1 py-0 rounded" data-name="edit">
+        <button class="bg-blue-600 px-1 rounded" 
+        data-name="edit" 
+        data-id="${element.id}">
         <ion-icon
         class="text-white text-center"
         data-id="${element.id}"
@@ -102,8 +106,9 @@ function renderData(item) {
         name="pencil"
         ></ion-icon>
         </button>
-        <button class="bg-gray-500 px-1 py-0 rounded" data-name="eye">
+        <button class="bg-gray-500 px-1 rounded" data-name="eye">
         <ion-icon
+        data-id="${element.id}"
         data-name="eye"
         class="text-white text-center"
         name="eye"
@@ -132,18 +137,38 @@ function handleStatus(item) {
 }
 tbody.addEventListener('click', (e) => {
   let target = e.target;
-//   let trId = +e.target.closest('tr').id;
-  if (target.dataset.name === 'delete') {
-    console.log('del');
-
-  } else if (e.target.dataset.name === 'edit') {
-    console.log('edit');
-    
-  } else if (target.dataset.name === 'eye') {
-    console.log('eye');
-  }
+  target.dataset.name === 'delete'
+    ? handleDelete(target)
+    : e.target.dataset.name === 'edit'
+    ? edit(target)
+    : target.dataset.name === 'eye'
+    ? console.log('eye')
+    : null;
 });
+function handleDelete(target) {
+  database = database.filter((item) => item.id !== +target.dataset.id);
+  setItem(database);
+  renderData(database);
+}
+function edit(target) {
+  active = +target.dataset.id;
 
+  openModal(modalBox);
+  handleEdit();
+}
+function handleEdit() {
+  let selectId = database.find((item) => {
+    if (item.id === active) {
+      return item;
+    }
+  });
+  form.querySelector('#task-name').value = selectId.taskInput;
+  form.querySelector('#priority').value = selectId.priorityInput;
+  form.querySelector('#status').value = selectId.statusInput;
+  form.querySelector('#deadline').value = selectId.deadlineInput;
+  form.querySelector('#textarea').value = selectId.desc;
+  isEdit = true;
+}
 
 function setItem(item) {
   localStorage.setItem('items', JSON.stringify(item));
@@ -157,197 +182,16 @@ function getItem() {
   }
 }
 
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
 
-// localStorage.removeItem("items");
-
-///editing
-// function editBtn(target) {
-//   let trId = +target.dataset.id;
-//   // console.log(trId);
-//   JSON.parse(localStorage.getItem('state')).map((item) => {
-//     if (item.id === trId) {
-//       // task.value = item.taskInput;
-//       // priority.value = item.priorityInput;
-//       // status.value = item.statusInput;
-//       // deadline.value = item.deadlineInput;
-
-//       let editfunc = editModal(
-//         item.taskInput,
-//         item.priorityInput,
-//         item.statusInput,
-//         item.deadlineInput,
-//         item.id
-//       );
-//       // console.log(editfunc);
-//       document.body.append(editfunc);
-//       editfunc.addEventListener('click', (e) => {
-//         e.stopPropagation();
-//         e.preventDefault();
-//         if (e.target.dataset.action === 'edit') {
-//           console.log('edit');
-//           let idEdit = +e.target.closest('form').getAttribute('id');
-//           // console.log(JSON.parse(localStorage.getItem("state")));
-//           console.log(idEdit);
-//           let newData = JSON.parse(localStorage.getItem('state')).map(
-//             (item) => {
-//               if (idEdit == item.id) {
-//                 item.taskInput = editTask.value;
-//                 console.log(item.taskInput);
-//                 console.log(typeof item.id);
-//                 item.taskInput = editTask.value;
-//                 item.priorityInput = editPriority.value;
-//                 item.statusInput = editStatus.value;
-//                 item.deadlineInput = editDeadline.value;
-//                 item.id = idEdit;
-//                 return item;
-//                 console.log(item);
-//               } else {
-//                 return item;
-//               }
-//             }
-//           );
-//           console.log(newData);
-//           localStorage.setItem('state', JSON.stringify(newData));
-//           renderData(database);
-//           console.log(e.target.closest('form').getAttribute('id'));
-//         } else if (e.target.dataset.action === 'cancel') {
-//           e.preventDefault();
-//           e.stopPropagation();
-//           editModalbtn.classList.add('invisible');
-//         }
-//         console.log(e.target.dataset);
-//       });
-//       // const editButton = document.getElementById("edit");
-//       // const editCancel = document.getElementById("edit-cancel");
-//       const editModalbtn = document.getElementById('edit-modal');
-//       // editCancel.addEventListener("click", (e) => {
-//       //   e.preventDefault();
-//       //   e.stopPropagation();
-//       //   editModalbtn.classList.add("invisible");
-//       // });
-//       // console.log(editButton);
-//       const editTask = document.getElementById('edit-task');
-//       const editPriority = document.getElementById('edit-priority');
-//       const editStatus = document.getElementById('edit-status');
-//       const editDeadline = document.getElementById('edit-deadline');
-//       console.log(editDeadline);
-//       // editButton.addEventListener("click", (e) => {
-//       //   e.stopPropagation();
-//       //   e.preventDefault();
-//       //   let idEdit = e.target.closest("form").getAttribute("id");
-//       //   // console.log(JSON.parse(localStorage.getItem("state")));
-//       //   console.log(idEdit);
-//       //   let newData = JSON.parse(localStorage.getItem("state")).map((item) => {
-//       //     if (idEdit == item.id) {
-//       //       item.taskInput = editTask.value;
-//       // console.log(item.taskInput);
-//       // console.log(typeof item.id);
-
-//       // item.taskInput = editTask.value;
-//       // item.priorityInput = editPriority.value;
-//       // item.statusInput = editStatus.value;
-//       // item.deadlineInput = editDeadline.value;
-//       // item.id = idEdit;
-//       // return item;
-//       // console.log(item);
-//       //   } else {
-//       //     return;
-//       //   }
-//       // });
-//       // console.log(newData);
-//       // localStorage.setItem("state", JSON.stringify(newData));
-//       // renderData();
-//       // console.log(e.target.closest("form").getAttribute("id"));
-//       // });
-//     }
-//   });
-
-//   // active = trId;
-//   // isEdit = true; //چون میخواهیم ادد نکنه به جدول
-// }
-// function handleEdit() {
-//   JSON.parse(localStorage.getItem("state")).map((item) => {
-//     if (item.id === active) {
-//       item.taskInput = task.value;
-//       item.priorityInput = priority.value;
-//       item.statusInput = status.value;
-//       item.deadlineInput = deadline.value;
-//     }
-//   });
-//   isEdit = false;
-//   renderData();
-// }
-
-//delete & edit
-
-// function editModal(item1, item2, item3, item4, id) {
-//   let div = document.createElement('div');
-//   div.innerHTML = `<div id="edit-modal"
-
-//   class="absolute inset-0 bg-gray-500 bg-opacity-80 flex items-center justify-center z-10"
-// >
-//   <div class="flex flex-col w-6/12 bg-white relative">
-//     <form id=${id}>
-//     <h1 class="font-bold p-4">New Task</h1>
-//     <hr />
-//     <div class="">
-//       <label>
-//         Task Name
-//         <input
-//         value=${item1}
-//           id="edit-task"
-//           class="rounded border border-3 m-3 p-3"
-//           type="text"
-//         />
-//       </label>
-//     </div>
-//     <div class="flex justify-between gap-6">
-//       <select id="edit-priority" class="p-3 border border-2 w-64">
-//         <option value="Low">Low</option>
-//         <option value="Medium">Medium</option>
-//         <option value="priority">Priority</option>
-//         <option value="High">High</option>
-//       </select>
-//       <select id="edit-status" class="border border-2 w-64">
-//         <option value="Status">Status</option>
-//         <option value="Todo">Todo</option>
-//         <option value="Doing">Doing</option>
-//         <option value="Done">Done</option>
-//       </select>
-//       <div
-
-//         class="text-center pt-2 date-picker border border-2 w-64"
-//       >
-//         <input
-//         id="edit-deadline"
-//           type="date"
-//           name="trip-start"
-//           value="2023-03-06"
-//           min="2018-01-01"
-//           max="2024-03-06"
-//         />
-//       </div>
-//     </div>
-//     <textarea
-//       class="border border-2 rounded m-3"
-//       placeholder="Details (Optional)"
-//     ></textarea>
-//     <div class="flex justify-between">
-//     <button data-action="cancel" class="border border-2 rounded p-1">
-//     CANCEL
-//     </button>
-//       <button data-action="edit" type="submit" class="border border-2 rounded p-1">EDIT</button>
-//     </div>
-//   </div>
-// </form>
-// </div>
-// </div>`;
-//   return div;
-// }
-
-// function editHandle(e) {
-//   e.stopPropagation();
-//   e.preventDefault();
-//   e.target.closest("form").getAttribute("id");
-//   console.log(e.target.closest("form").getAttribute("id"));
-// }
+  if (e.submitter.dataset.id === 'cancel') {
+    closeModal(modalBox);
+  } else if (e.submitter.dataset.id === 'save') {
+    addToData(e);
+    renderData(database);
+    closeModal(modalBox);
+  }
+  form.reset();
+});
+// localStorage.removeItem("items")
