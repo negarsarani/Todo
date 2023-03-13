@@ -9,7 +9,9 @@ const aside = document.getElementById('aside');
 let database = [];
 let active;
 let isEdit = false;
-getItem();
+const Base_Url = 'http://localhost/3000'
+
+
 nav.addEventListener('click', (e) => navBtn(e));
 function navBtn(e) {
   let target = e.target;
@@ -39,7 +41,6 @@ function addToData(e) {
       desc: desc.value,
     };
     database.push(obj);
-    setItem(database);
   } else if (isEdit === true) {
     database.forEach((item) => {
       if (item.id === active) {
@@ -52,7 +53,6 @@ function addToData(e) {
     });
     isEdit = false;
     renderData(database);
-    setItem(database);
     active = '';
   }
 }
@@ -147,7 +147,6 @@ tbody.addEventListener('click', (e) => {
 });
 function handleDelete(target) {
   database = database.filter((item) => item.id !== +target.dataset.id);
-  setItem(database);
   renderData(database);
 }
 function edit(target) {
@@ -170,18 +169,6 @@ function handleEdit() {
   isEdit = true;
 }
 
-function setItem(item) {
-  localStorage.setItem('items', JSON.stringify(item));
-}
-function getItem() {
-  const firstItem = localStorage.getItem('items');
-  if (firstItem) {
-    const parssedItems = JSON.parse(firstItem);
-    renderData(parssedItems);
-    database = parssedItems;
-  }
-}
-
 form.addEventListener('submit', (e) => {
   e.preventDefault();
 
@@ -194,4 +181,21 @@ form.addEventListener('submit', (e) => {
   }
   form.reset();
 });
-// localStorage.removeItem("items")
+
+// API
+async function sendData(){
+
+}
+
+
+// function setItem(item) {
+//   localStorage.setItem('items', JSON.stringify(item));
+// }
+// function getItem() {
+//   const firstItem = localStorage.getItem('items');
+//   if (firstItem) {
+//     const parssedItems = JSON.parse(firstItem);
+//     renderData(parssedItems);
+//     database = parssedItems;
+//   }
+// }

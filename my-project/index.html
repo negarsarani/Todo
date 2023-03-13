@@ -9,7 +9,6 @@
 
 <body>
   <div class="flex flex-col justify-between">
-    <!-- <div id="app"></div> -->
     <nav id="nav" class="bg-purple-800 p-3 sm:flex justify-between items-center">
       <div class="ml-3  text-center flex  justify-center gap-1">
         <button class="cursor-pointer">
@@ -19,7 +18,8 @@
       </div>
       <div class="flex gap-5 sm:pr-3 justify-center">
         <div class="flex bg-purple-600 px-2  gap-1 rounded-md">
-          <div class="flex items-center justify-center"> <ion-icon class="text-center items-center justify-center text-white" name="search"></ion-icon></div>
+          <div class="flex items-center justify-center"> <ion-icon
+              class="text-center items-center justify-center text-white" name="search"></ion-icon></div>
           <input type="text" class="  rounded bg-transparent outline-none text-white" placeholder="Search" />
         </div>
         <button data-id="filter" class="cursor-pointer">
@@ -40,11 +40,30 @@
           <td class="text-center border-l-2 border-b-2">Actions</td>
         </thead>
         <tbody id="tbody">
-          
-        </tbody>
-      </table>
 
+        </tbody>
+        
+      </table>
+      <!-- <div class="w-full h-full flex items-end justify-end p-3">
+        <div class="flex flex-col items-center">
+          <span class="text-sm text-gray-700 dark:text-gray-400">
+            Showing <span class="font-semibold text-gray-900 dark:text-white">1</span> to <span
+              class="font-semibold text-gray-900 dark:text-white">10</span> of <span
+              class="font-semibold text-gray-900 dark:text-white">100</span> Entries
+          </span>
+          <div class="inline-flex mt-2 xs:mt-0">
+            <button
+              class="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+              Prev
+            </button>
+            <button
+              class="px-4 py-2 text-sm font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+              Next
+            </button>
+          </div>
+        </div> -->
     </main>
+    
     <div id="modal-box"
       class="invisible absolute inset-0 bg-gray-500 bg-opacity-80 flex items-center justify-center z-10">
       <div class="flex p-4 flex-col w-6/12 bg-white relative">
@@ -65,7 +84,7 @@
               <option value="High">High</option>
             </select>
             <select id="status" class="border border-2 w-64">
-              <option value="Status" disabled >Status</option>
+              <option value="Status" disabled>Status</option>
               <option value="Todo">Todo</option>
               <option value="Doing">Doing</option>
               <option value="Done">Done</option>
@@ -81,14 +100,19 @@
             </button>
             <button data-id="save" type="submit" class="border border-2 rounded p-1">SAVE</button>
           </div>
-       </div>
+      </div>
       </form>
     </div>
-    <aside id="aside" class="invisible absolute right-0 w-32 h-full bg-red-500   flex items-center justify-center z-[10000]">
+    <aside id="aside"
+      class="invisible absolute right-0 w-32 h-full bg-red-500   flex items-center justify-center z-[10000]">
       <div>ssssssssssssssss</div>
     </aside>
+    
+
+    </div>
   </div>
   <script type="module" src="/main.js"></script>
+  <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
