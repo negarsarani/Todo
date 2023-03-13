@@ -1,10 +1,12 @@
 import './style.css';
-
+import { debounce } from 'lodash/functions.js';
 const modalBox = document.getElementById('modal-box');
 const tbody = document.getElementById('tbody');
 const form = document.getElementById('form');
 const nav = document.getElementById('nav');
 const aside = document.getElementById('aside');
+const paginate = document.getElementById('paginate');
+const search = document.getElementById('search');
 
 let active;
 let isEdit = false;
@@ -40,12 +42,16 @@ function addToData(e) {
       desc: desc.value,
     };
     database.then((response) => {
+      console.log(response);
       response.push(obj);
       renderData(response);
+      return response;
     });
+    console.log(database);
     post(BASE_URL, 'users', obj);
   } else if (isEdit === true) {
-    database.then((response) => {
+    database = getData(BASE_URL, 'users');
+    database = database.then((response) => {
       response.forEach((item) => {
         if (item.id === active) {
           item.taskInput = task.value;
@@ -58,6 +64,7 @@ function addToData(e) {
       });
       renderData(response);
       form.reset();
+      return response;
     });
     isEdit = false;
   }
@@ -165,10 +172,20 @@ tbody.addEventListener('click', (e) => {
 function handleDelete(target) {
   const targetID = +target.dataset.id;
   deleteData(BASE_URL, 'users', targetID);
-  database = database.then((response) => {
-   return response.filter((item) => item.id !== targetID);
-  });
-  database.then((response) => renderData(response));
+  database = getData(BASE_URL, 'users');
+  database = database
+    .then((resolve) => {
+      return resolve.filter((item) => item.id !== targetID);
+    })
+    .then((response) => {
+      renderData(response);
+      return response;
+    });
+
+  // database = database.then((response) => {
+  //   return response.filter((item) => item.id !== targetID);
+  // });
+  // database.then((response) => renderData(response));
 }
 function edit(target) {
   active = +target.dataset.id;
@@ -214,7 +231,7 @@ async function post(URL, endpoint, item) {
 async function getData(url, endpoint) {
   try {
     let data = await fetch(`${url}/${endpoint}`);
-    return data.json();
+    return await data.json();
   } catch (error) {
     console.log(error);
   }
@@ -243,4 +260,11 @@ async function deleteData(URL, endpoint, id) {
   }
 }
 
-
+//Paginate
+// paginate.addEventListener('click', paginateBtn);
+// function paginateBtn(target) {
+//   const target = e.target;
+//   console.log((target));
+// }
+// GET /posts?_page=7
+// GET /posts?_page=7&_limit=20

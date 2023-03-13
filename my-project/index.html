@@ -20,7 +20,7 @@
         <div class="flex bg-purple-600 px-2  gap-1 rounded-md">
           <div class="flex items-center justify-center"> <ion-icon
               class="text-center items-center justify-center text-white" name="search"></ion-icon></div>
-          <input type="text" class="  rounded bg-transparent outline-none text-white" placeholder="Search" />
+          <input type="text" id="search" class="  rounded bg-transparent outline-none text-white" placeholder="Search" />
         </div>
         <button data-id="filter" class="cursor-pointer">
           <ion-icon data-id="filter" class="text-white text-2xl" name="filter"></ion-icon>
@@ -44,7 +44,7 @@
         </tbody>
         
       </table>
-      <div class="w-full h-full flex justify-end p-3  ">
+      <div class="w-full h-full flex justify-end p-3" id="paginate">
         <div class="flex flex-col items-center">
           <span class="text-sm text-gray-700 dark:text-gray-400">
             Showing <span class="font-semibold text-gray-900 dark:text-white">1</span> to <span
@@ -53,10 +53,12 @@
           </span>
           <div class="inline-flex mt-2 xs:mt-0">
             <button
+            data-name="previous"
               class="px-4 py-2 text-sm font-medium text-white bg-gray-500 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
               Prev
             </button>
             <button
+            data-name="next"
               class="px-4 py-2 text-sm font-medium text-white bg-gray-500 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
               Next
             </button>
@@ -114,7 +116,6 @@
   <script type="module" src="/main.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-  <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
 </body>
 
 </html>
