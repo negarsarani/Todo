@@ -6,11 +6,10 @@ const form = document.getElementById('form');
 const nav = document.getElementById('nav');
 const aside = document.getElementById('aside');
 
-let database = [];
 let active;
 let isEdit = false;
-const Base_Url = 'http://localhost/3000'
-
+const BASE_URL = 'http://localhost:3002';
+let database = getData(BASE_URL, 'users');
 
 nav.addEventListener('click', (e) => navBtn(e));
 function navBtn(e) {
@@ -40,26 +39,42 @@ function addToData(e) {
       deadlineInput: deadline.value,
       desc: desc.value,
     };
-    database.push(obj);
+    database.then((response) => {
+      response.push(obj);
+      renderData(response);
+    });
+    post(BASE_URL, 'users', obj);
   } else if (isEdit === true) {
-    database.forEach((item) => {
-      if (item.id === active) {
-        item.taskInput = task.value;
-        item.priorityInput = priority.value;
-        item.statusInput = status.value;
-        item.deadlineInput = deadline.value;
-        item.desc = desc.value;
-      }
+    database.then((response) => {
+      response.forEach((item) => {
+        if (item.id === active) {
+          item.taskInput = task.value;
+          item.priorityInput = priority.value;
+          item.statusInput = status.value;
+          item.deadlineInput = deadline.value;
+          item.desc = desc.value;
+          Update(BASE_URL, 'users', item);
+        }
+      });
+      renderData(response);
+      form.reset();
     });
     isEdit = false;
-    renderData(database);
-    active = '';
   }
 }
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
 
+  if (e.submitter.dataset.id === 'cancel') {
+    closeModal(modalBox);
+    form.reset();
+  } else if (e.submitter.dataset.id === 'save') {
+    addToData(e);
+    closeModal(modalBox);
+  }
+});
 function renderData(item) {
   tbody.innerHTML = '';
-
   item.map((element) => {
     tbody.insertAdjacentHTML(
       'beforeend',
@@ -121,6 +136,8 @@ function renderData(item) {
   });
 }
 
+database.then((response) => renderData(response));
+
 function handlePriority(item) {
   return item === 'High'
     ? 'bg-red-500 text-white'
@@ -146,56 +163,84 @@ tbody.addEventListener('click', (e) => {
     : null;
 });
 function handleDelete(target) {
-  database = database.filter((item) => item.id !== +target.dataset.id);
-  renderData(database);
+  const targetID = +target.dataset.id;
+  deleteData(BASE_URL, 'users', targetID);
+  database = database.then((response) => {
+   return response.filter((item) => item.id !== targetID);
+  });
+  database.then((response) => renderData(response));
 }
 function edit(target) {
   active = +target.dataset.id;
-
   openModal(modalBox);
   handleEdit();
 }
 function handleEdit() {
-  let selectId = database.find((item) => {
-    if (item.id === active) {
-      return item;
-    }
-  });
-  form.querySelector('#task-name').value = selectId.taskInput;
-  form.querySelector('#priority').value = selectId.priorityInput;
-  form.querySelector('#status').value = selectId.statusInput;
-  form.querySelector('#deadline').value = selectId.deadlineInput;
-  form.querySelector('#textarea').value = selectId.desc;
+  database
+    .then((response) => {
+      return response.find((item) => {
+        if (item.id === active) {
+          return item;
+        }
+      });
+    })
+    .then((response) => {
+      form.querySelector('#task-name').value = response.taskInput;
+      form.querySelector('#priority').value = response.priorityInput;
+      form.querySelector('#status').value = response.statusInput;
+      form.querySelector('#deadline').value = response.deadlineInput;
+      form.querySelector('#textarea').value = response.desc;
+    });
+
   isEdit = true;
 }
 
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  if (e.submitter.dataset.id === 'cancel') {
-    closeModal(modalBox);
-  } else if (e.submitter.dataset.id === 'save') {
-    addToData(e);
-    renderData(database);
-    closeModal(modalBox);
-  }
-  form.reset();
-});
-
 // API
-async function sendData(){
 
+async function post(URL, endpoint, item) {
+  try {
+    await fetch(`${URL}/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(item),
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getData(url, endpoint) {
+  try {
+    let data = await fetch(`${url}/${endpoint}`);
+    return data.json();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function Update(URL, endpoint, item) {
+  try {
+    await fetch(`${URL}/${endpoint}/${item.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(item),
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+async function deleteData(URL, endpoint, id) {
+  try {
+    await fetch(`${URL}/${endpoint}/${id}`, {
+      method: 'DELETE',
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 
-// function setItem(item) {
-//   localStorage.setItem('items', JSON.stringify(item));
-// }
-// function getItem() {
-//   const firstItem = localStorage.getItem('items');
-//   if (firstItem) {
-//     const parssedItems = JSON.parse(firstItem);
-//     renderData(parssedItems);
-//     database = parssedItems;
-//   }
-// }
