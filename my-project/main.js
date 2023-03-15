@@ -1,5 +1,5 @@
 import './style.css';
-import { debounce } from 'lodash/functions.js';
+import { debounce } from 'lodash/function.js';
 const modalBox = document.getElementById('modal-box');
 const tbody = document.getElementById('tbody');
 const form = document.getElementById('form');
@@ -32,6 +32,7 @@ function openModal(item) {
 function addToData(e) {
   const target = e.target;
   const [task, priority, status, deadline, desc] = Array.from(target.elements);
+  console.log(Array.from(target.elements));
   if (isEdit === false) {
     const obj = {
       id: Date.now(),
@@ -91,7 +92,7 @@ function renderData(item) {
               <span
               class="
               ${handlePriority(element.priorityInput)}
-            rounded-xl px-2 py-1 items-center"
+            rounded-2xl px-3 py-1 items-center"
               >
               ${element.priorityInput}
         </span>
@@ -100,13 +101,13 @@ function renderData(item) {
       <span
       class=" 
       ${handleStatus(element.statusInput)}
-       text-white w-max rounded-xl px-2 py-1 items-center"
+       text-white w-max rounded-2xl px-3 py-1 items-center"
       >
       ${element.statusInput}
       </span>
       </td>
-      <td class="border-l-2 border-b-2 ">${element.deadlineInput}</td>
-      <td class="border  ">
+      <td class=" border ">${element.deadlineInput}</td>
+      <td class="border">
 
       <button class="bg-red-600 px-1 rounded" 
       data-name='delete'
@@ -149,15 +150,15 @@ function handlePriority(item) {
   return item === 'High'
     ? 'bg-red-500 text-white'
     : item === 'Medium'
-    ? 'bg-yellow-500 '
-    : 'bg-gray-500';
+    ? 'bg-yellow-400 '
+    : 'bg-gray-300';
 }
 function handleStatus(item) {
   return item === 'Todo'
     ? 'bg-red-500 '
     : item === 'Doing'
-    ? 'bg-yellow-500 text-black '
-    : 'bg-green-500';
+    ? 'bg-yellow-400 text-black'
+    : 'bg-green-400';
 }
 tbody.addEventListener('click', (e) => {
   let target = e.target;
@@ -181,7 +182,7 @@ function handleDelete(target) {
       renderData(response);
       return response;
     });
-
+ 
   // database = database.then((response) => {
   //   return response.filter((item) => item.id !== targetID);
   // });
@@ -260,6 +261,18 @@ async function deleteData(URL, endpoint, id) {
   }
 }
 
+//search
+function searchInput(e) {
+  let value = e.target.value;
+  console.log(value);
+  database = getData(BASE_URL, `users?q=${value}`).then((response) => {
+    renderData(response);
+    return response
+  });
+}
+search.addEventListener('keyup', debounce(searchInput, 1000));
+
+
 //Paginate
 // paginate.addEventListener('click', paginateBtn);
 // function paginateBtn(target) {
@@ -268,3 +281,4 @@ async function deleteData(URL, endpoint, id) {
 // }
 // GET /posts?_page=7
 // GET /posts?_page=7&_limit=20
+await Promise.resolve(console.log('🎉'));
