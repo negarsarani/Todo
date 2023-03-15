@@ -48,22 +48,31 @@
 
       </table>
       <div class="w-full h-full flex justify-end p-3" id="paginate">
-        <div class="flex flex-col items-center">
-          <span class="text-sm text-gray-700 dark:text-gray-400">
-            Showing <span class="font-semibold text-gray-900 dark:text-white">1</span> to <span
+        <div class="flex gap-2 items-center ">
+          <div>
+            <span>Rows per page:</span>
+            <select name="" id="" class="h-10">
+              <option value="All">All</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </div>
+          <div class="text-sm text-gray-700 dark:text-gray-400">
+             <span class="font-semibold text-gray-900 dark:text-white">1</span> - <span
               class="font-semibold text-gray-900 dark:text-white">10</span> of <span
-              class="font-semibold text-gray-900 dark:text-white">100</span> Entries
-          </span>
-          <div class="inline-flex mt-2 xs:mt-0">
-            <button data-name="previous"
-              class="px-4 py-2 text-sm font-medium text-white bg-gray-500 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-              Prev
+              class="font-semibold text-gray-900 dark:text-white">100</span> 
+          </div>
+          <div class="flex gap-2 mt-2 xs:mt-0 items-center justify-center rounded-2xl bg-slate-400">
+            <button data-name="previous" class=" hover:bg-slate-300  rounded-l-2xl">
+            <svg aria-hidden="true" data-name="previous" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+
             </button>
-            <button data-name="next"
-              class="px-4 py-2 text-sm font-medium text-white bg-gray-500 border-0 border-l border-gray-700 rounded-r hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-              Next
+            <button data-name="next" class=" hover:bg-slate-300 rounded-r-2xl">
+            <svg aria-hidden="true" data-name="next" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+
             </button>
           </div>
+         
         </div>
     </main>
 
@@ -138,10 +147,7 @@
           <div class="w-full ">
             <p class="mb-2">Deadline:</p>
             <select name="" id="" class="w-full rounded-md ">
-              <option value="All">All</option>
-              <option value="Todo">Todo</option>
-              <option value="Doing">Doing</option>
-              <option value="Done">Done</option>
+              <input type="date">
             </select>
           </div>
         </div>

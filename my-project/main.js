@@ -1,5 +1,6 @@
 import './style.css';
 import { debounce } from 'lodash/function.js';
+import { data } from 'autoprefixer';
 const modalBox = document.getElementById('modal-box');
 const tbody = document.getElementById('tbody');
 const form = document.getElementById('form');
@@ -11,7 +12,8 @@ const search = document.getElementById('search');
 let active;
 let isEdit = false;
 const BASE_URL = 'http://localhost:3002';
-let database = getData(BASE_URL, 'users');
+let page = 1 
+let database = getData(BASE_URL, `users`);
 
 nav.addEventListener('click', (e) => navBtn(e));
 function navBtn(e) {
@@ -43,15 +45,13 @@ function addToData(e) {
       desc: desc.value,
     };
     database.then((response) => {
-      console.log(response);
       response.push(obj);
-      renderData(response);
-      return response;
+      pagination()
     });
     console.log(database);
     post(BASE_URL, 'users', obj);
   } else if (isEdit === true) {
-    database = getData(BASE_URL, 'users');
+    database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
     database = database.then((response) => {
       response.forEach((item) => {
         if (item.id === active) {
@@ -143,8 +143,8 @@ function renderData(item) {
     );
   });
 }
-
-database.then((response) => renderData(response));
+let db= getData(BASE_URL, `users?_page=${page}&_limit=3`)
+db.then((response) => renderData(response));
 
 function handlePriority(item) {
   return item === 'High'
@@ -173,16 +173,27 @@ tbody.addEventListener('click', (e) => {
 function handleDelete(target) {
   const targetID = +target.dataset.id;
   deleteData(BASE_URL, 'users', targetID);
-  database = getData(BASE_URL, 'users');
-  database = database
-    .then((resolve) => {
-      return resolve.filter((item) => item.id !== targetID);
-    })
-    .then((response) => {
-      renderData(response);
-      return response;
-    });
- 
+  database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+  pagination()
+  // database = database
+  //   .then((resolve) => {
+  //     return resolve.filter((item) => item.id !== targetID);
+  //   })
+  //   .then((response) => {
+  //     renderData(response);
+  //     return response;
+  //   });
+    // deleteData(BASE_URL, 'users', targetID);
+    // database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+    // database = database
+    //   .then((resolve) => {
+    //     return resolve.filter((item) => item.id !== targetID);
+    //   })
+    //   .then((response) => {
+    //     renderData(response);
+    //     return response;
+    //   });
+
   // database = database.then((response) => {
   //   return response.filter((item) => item.id !== targetID);
   // });
@@ -232,6 +243,9 @@ async function post(URL, endpoint, item) {
 async function getData(url, endpoint) {
   try {
     let data = await fetch(`${url}/${endpoint}`);
+    console.log(data.headers.get('link').split(',')[1].split(';')[0].split('/')[3]);
+
+    // console.log(data.headers('X-Total-Count'));
     return await data.json();
   } catch (error) {
     console.log(error);
@@ -267,18 +281,44 @@ function searchInput(e) {
   console.log(value);
   database = getData(BASE_URL, `users?q=${value}`).then((response) => {
     renderData(response);
-    return response
+    return response;
   });
 }
 search.addEventListener('keyup', debounce(searchInput, 1000));
 
-
 //Paginate
-// paginate.addEventListener('click', paginateBtn);
-// function paginateBtn(target) {
-//   const target = e.target;
-//   console.log((target));
-// }
+paginate.addEventListener('click', (e) => {
+  const targetp = e.target;
+  targetp.dataset.name === 'next'
+    ? nextPage()
+    : targetp.dataset.name === 'previous'
+    ? previousPage()
+    : null;
+});
+
+function nextPage() {
+  page = ++page;
+  database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+
+  database.then((response) => {
+    renderData(response);
+    return response;
+  });
+}
+function previousPage() {
+  page > 1 ? page = --page : page;
+  database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+  database.then((response) => {
+    renderData(response);
+    return response;
+  });
+}
+function pagination() {
+  database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+  database.then((response) => {
+    renderData(response);
+    return response;
+  });
+}
 // GET /posts?_page=7
 // GET /posts?_page=7&_limit=20
-await Promise.resolve(console.log('🎉'));
