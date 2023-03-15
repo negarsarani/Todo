@@ -8,11 +8,12 @@ const nav = document.getElementById('nav');
 const aside = document.getElementById('aside');
 const paginate = document.getElementById('paginate');
 const search = document.getElementById('search');
+const loading = document.getElementById('loading');
 
 let active;
 let isEdit = false;
 const BASE_URL = 'http://localhost:3002';
-let page = 1 
+let page = 1;
 let database = getData(BASE_URL, `users`);
 
 nav.addEventListener('click', (e) => navBtn(e));
@@ -44,12 +45,11 @@ function addToData(e) {
       deadlineInput: deadline.value,
       desc: desc.value,
     };
-    database.then((response) => {
-      response.push(obj);
-      pagination()
-    });
-    console.log(database);
-    post(BASE_URL, 'users', obj);
+    // database.then((response) => {
+    //     response.push(obj);
+    //     renderData(response);
+    //   })
+    post(BASE_URL, 'users', obj).then( () => pagination());
   } else if (isEdit === true) {
     database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
     database = database.then((response) => {
@@ -143,8 +143,7 @@ function renderData(item) {
     );
   });
 }
-let db= getData(BASE_URL, `users?_page=${page}&_limit=3`)
-db.then((response) => renderData(response));
+pagination()
 
 function handlePriority(item) {
   return item === 'High'
@@ -174,7 +173,7 @@ function handleDelete(target) {
   const targetID = +target.dataset.id;
   deleteData(BASE_URL, 'users', targetID);
   database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
-  pagination()
+  pagination();
   // database = database
   //   .then((resolve) => {
   //     return resolve.filter((item) => item.id !== targetID);
@@ -183,16 +182,16 @@ function handleDelete(target) {
   //     renderData(response);
   //     return response;
   //   });
-    // deleteData(BASE_URL, 'users', targetID);
-    // database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
-    // database = database
-    //   .then((resolve) => {
-    //     return resolve.filter((item) => item.id !== targetID);
-    //   })
-    //   .then((response) => {
-    //     renderData(response);
-    //     return response;
-    //   });
+  // deleteData(BASE_URL, 'users', targetID);
+  // database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+  // database = database
+  //   .then((resolve) => {
+  //     return resolve.filter((item) => item.id !== targetID);
+  //   })
+  //   .then((response) => {
+  //     renderData(response);
+  //     return response;
+  //   });
 
   // database = database.then((response) => {
   //   return response.filter((item) => item.id !== targetID);
@@ -228,13 +227,14 @@ function handleEdit() {
 
 async function post(URL, endpoint, item) {
   try {
-    await fetch(`${URL}/${endpoint}`, {
+    let data = await fetch(`${URL}/${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(item),
     });
+    return data;
   } catch (error) {
     console.log(error);
   }
@@ -243,8 +243,7 @@ async function post(URL, endpoint, item) {
 async function getData(url, endpoint) {
   try {
     let data = await fetch(`${url}/${endpoint}`);
-    console.log(data.headers.get('link').split(',')[1].split(';')[0].split('/')[3]);
-
+    // console.log(data.headers.get('link').split(',')[1].split(';')[0].split('/')[3]);
     // console.log(data.headers('X-Total-Count'));
     return await data.json();
   } catch (error) {
@@ -279,10 +278,13 @@ async function deleteData(URL, endpoint, id) {
 function searchInput(e) {
   let value = e.target.value;
   console.log(value);
-  database = getData(BASE_URL, `users?q=${value}`).then((response) => {
-    renderData(response);
-    return response;
-  });
+ if( value != ""){
+   database = getData(BASE_URL, `users?q=${value}`).then((response) => {
+     renderData(response);
+     return response;
+   })
+  }
+  else pagination()
 }
 search.addEventListener('keyup', debounce(searchInput, 1000));
 
@@ -298,25 +300,30 @@ paginate.addEventListener('click', (e) => {
 
 function nextPage() {
   page = ++page;
+  openModal(loading);
   database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
-
   database.then((response) => {
     renderData(response);
+    closeModal(loading);
     return response;
   });
 }
 function previousPage() {
-  page > 1 ? page = --page : page;
+  page > 1 ? (page = --page) : page;
+  openModal(loading);
   database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
   database.then((response) => {
     renderData(response);
+    closeModal(loading);
     return response;
   });
 }
 function pagination() {
+  openModal(loading);
   database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
   database.then((response) => {
     renderData(response);
+    closeModal(loading);
     return response;
   });
 }
