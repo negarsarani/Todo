@@ -9,37 +9,38 @@
 
 <body>
   <div class="flex flex-col h-screen  relative">
-    <nav id="nav" class="bg-purple-800 p-3 sm:flex justify-between items-center">
+    <nav id="nav" class="bg-purple-800 p-3 sm:flex  gap-2 justify-between items-center">
       <div class="ml-3  text-center flex  justify-center gap-1">
         <button class="cursor-pointer">
           <ion-icon class="text-2xl text-white" name="menu"></ion-icon>
         </button>
         <p class="text-white inline-block text-center">My To-Do Tasks</p>
       </div>
-      <div class="flex gap-5 sm:pr-3 justify-center">
-        <div class="flex bg-purple-600 px-2  gap-1 rounded-md">
+      <div class="flex gap-5 sm:pr-3 sm:justify-center justify-between ">
+        <div class="flex bg-purple-600 px-2  gap-1 rounded-md  w-full">
           <div class="flex items-center justify-center"> <ion-icon
               class="text-center items-center justify-center text-white" name="search"></ion-icon>
           </div>
-          <input type="text" id="search"
-            class=" border-transparent focus:border-transparent focus:ring-0 border-none rounded bg-transparent placeholder:text-white"
-            placeholder="Search" />
+          <input type="text" id="search" class=" border-transparent focus:border-transparent focus:ring-0 border-none
+            text-white rounded bg-transparent placeholder:text-white" placeholder="Search" />
         </div>
-        <button data-id="filter" class="cursor-pointer">
-          <ion-icon data-id="filter" class="text-white text-2xl" name="filter"></ion-icon>
-        </button>
-        <button data-id="add" class="cursor-pointer mr-3">
-          <ion-icon data-id="add" class="text-white text-2xl" name="add"></ion-icon>
-        </button>
+        <div class="flex gap-2 ">
+          <button data-id="filter" class="cursor-pointer">
+            <ion-icon data-id="filter" class="text-white text-2xl" name="filter"></ion-icon>
+          </button>
+          <button data-id="add" class="cursor-pointer mr-3">
+            <ion-icon data-id="add" class="text-white text-2xl" name="add"></ion-icon>
+          </button>
+        </div>
       </div>
     </nav>
     <main class=" h-screen">
-      <table class="w-full  border-2">
+      <table class="w-full  border-2 overflow-x-auto ">
         <thead class="font-bold border-l-2">
           <td class="text-center border-l-2 border-b-2 py-4">Task Name</td>
           <td class="text-center border-l-2 border-b-2">Priority</td>
           <td class="text-center border-l-2 border-b-2">Status</td>
-          <td class="text-center border-l-2 border-b-2">Deadline</td>
+          <td class="text-center border-l-2 border-b-2 ">Deadline</td>
           <td class="text-center border-l-2 border-b-2">Actions</td>
         </thead>
         <tbody id="tbody">
@@ -47,23 +48,23 @@
         </tbody>
 
       </table>
-      <div class="w-full  flex justify-end p-3" id="paginate">
-        <div class="flex gap-2 items-center ">
-          <div>
+      <div class="w-full  flex justify-center p-3" id="paginate">
+        <div class="flex gap-2 items-center  justify-center">
+          <!-- <div>
             <span>Rows per page:</span>
             <select name="" id="" class="h-10">
               <option value="All">All</option>
               <option value="10">10</option>
               <option value="15">15</option>
             </select>
-          </div>
-          <div class="text-sm text-gray-700 dark:text-gray-400">
+          </div> -->
+          <!-- <div class="text-sm text-gray-700 dark:text-gray-400">
             <span class="font-semibold text-gray-900 dark:text-white">1</span> - <span
               class="font-semibold text-gray-900 dark:text-white">10</span> of <span
               class="font-semibold text-gray-900 dark:text-white">100</span>
-          </div>
-          <div class="flex gap-2 mt-2 xs:mt-0 items-center justify-center rounded-2xl bg-slate-400">
-            <button data-name="previous" class=" hover:bg-slate-300  rounded-l-2xl">
+          </div> -->
+          <div class="flex gap-2 mt-2 xs:mt-0 items-center justify-center rounded-2xl  bg-purple-300">
+            <button data-name="previous" class=" hover:bg-purple-500  rounded-l-2xl px-2 py-1">
               <svg aria-hidden="true" data-name="previous" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd"
@@ -72,7 +73,7 @@
               </svg>
 
             </button>
-            <button data-name="next" class=" hover:bg-slate-300 rounded-r-2xl">
+            <button data-name="next" class=" hover:bg-purple-500 rounded-r-2xl px-2 py-1">
               <svg aria-hidden="true" data-name="next" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd"
@@ -86,9 +87,9 @@
         </div>
     </main>
 
-    <div id="modal-box"
+    <div id="modal-box" data-close="close"
       class="invisible absolute inset-0 backdrop-blur-sm bg-slate-300 bg-opacity-30 flex items-center justify-center z-10">
-      <div class="flex  flex-col  w-8/12 bg-white relative">
+      <div class="flex  flex-col  md:w-6/12 w-8/12 lg:w-4/12 bg-white relative">
         <h1 class="text-lg p-3 ">New Task</h1>
         <hr />
         <form id="form" class="flex flex-col  gap-4 w-full  p-4">
@@ -119,27 +120,26 @@
             placeholder="Details (Optional)"></textarea>
           <div>
             <div class="flex justify-between">
-              <button data-id="cancel" type="submit"
-                class=" text-blue-500 border border-blue-500 rounded-sm px-4 py-1 ">
+              <button data-id="cancel" type="submit" class=" text-blue-500 border border-blue-500 rounded-sm px-4  ">
                 CANCEL
               </button>
-              <button data-id="save" type="submit" class="rounded-sm  bg-blue-500 text-white px-4 py-1 ">SAVE</button>
+              <button data-id="save" type="submit" class="rounded-sm  bg-blue-500 text-white px-4 ">SAVE</button>
             </div>
           </div>
         </form>
       </div>
     </div>
-    <aside id="aside"
+    <aside id="filter" data-close="close"
       class="invisible absolute w-full h-full items-center justify-center  z-[1000] inset-0  backdrop-blur-sm bg-slate-300 bg-opacity-30">
-      <div class="flex gap-6 flex-col absolute right-0 h-full w-5/12 bg-white py-6 px-4">
+      <div class="flex gap-6 flex-col absolute right-0 h-full md:w-4/12 lg:w-3/12 w-6/12 sm:w-5/12 bg-white py-6 px-4">
         <div class="w-full flex justify-between">
           <span class="text-lg">Filters</span>
-          <ion-icon name="close-outline" class="cursor-pointer "></ion-icon>
+          <ion-icon data-close="close" name="close-outline" class="cursor-pointer "></ion-icon>
         </div>
         <div class="w-full flex flex-col gap-4">
           <div class="w-full ">
             <p class="mb-2">Priority:</p>
-            <select name="" id="" class="w-full rounded-md">
+            <select name="" id="" data-value="filterItem" class="w-full rounded-md">
               <option value="All">All</option>
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
@@ -148,23 +148,22 @@
           </div>
           <div class="w-full ">
             <p class="mb-2"> Status:</p>
-            <select name="" id="" class="w-full rounded-md ">
+            <select name="" id="" data-value="filterItem" class="w-full rounded-md ">
               <option value="All">All</option>
               <option value="Todo">Todo</option>
               <option value="Doing">Doing</option>
               <option value="Done">Done</option>
             </select>
           </div>
-          <div class="w-full ">
+          <div class="w-full  ">
             <p class="mb-2">Deadline:</p>
-            <select name="" id="" class="w-full rounded-md ">
-              <input type="date">
-            </select>
+            <input type="date" data-value="filterItem" class="w-full rounded-md">
           </div>
         </div>
       </div>
     </aside>
-    <div class="invisible h-screen z-[100] absolute inset-x-0 flex items-center justify-center shadow-2xl " id="loading">
+    <div class="invisible h-screen z-[100] absolute inset-x-0 flex items-center justify-center shadow-2xl "
+      id="loading">
       <div
         class="flex items-center justify-center inset-0 backdrop-blur-sm bg-slate-300 bg-opacity-30 border p-3 px-7 border-gray-100 rounded-lg shadow-md">
 

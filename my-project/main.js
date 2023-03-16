@@ -5,10 +5,10 @@ const modalBox = document.getElementById('modal-box');
 const tbody = document.getElementById('tbody');
 const form = document.getElementById('form');
 const nav = document.getElementById('nav');
-const aside = document.getElementById('aside');
 const paginate = document.getElementById('paginate');
 const search = document.getElementById('search');
 const loading = document.getElementById('loading');
+const filter = document.getElementById('filter');
 
 let active;
 let isEdit = false;
@@ -20,7 +20,7 @@ nav.addEventListener('click', (e) => navBtn(e));
 function navBtn(e) {
   let target = e.target;
   if (target.dataset.id === 'filter') {
-    openModal(aside);
+    openModal(filter);
   } else if (target.dataset.id === 'add') {
     openModal(modalBox);
   }
@@ -49,9 +49,9 @@ function addToData(e) {
     //     response.push(obj);
     //     renderData(response);
     //   })
-    post(BASE_URL, 'users', obj).then( () => pagination());
+    post(BASE_URL, 'users', obj).then(() => pagination());
   } else if (isEdit === true) {
-    database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+    database = getData(BASE_URL, `users?_page=${page}&_limit=5`);
     database = database.then((response) => {
       response.forEach((item) => {
         if (item.id === active) {
@@ -70,9 +70,11 @@ function addToData(e) {
     isEdit = false;
   }
 }
+modalBox.addEventListener('click', (e) => {
+  e.target.dataset.close ? closeModal(modalBox) : null;
+});
 form.addEventListener('submit', (e) => {
   e.preventDefault();
-
   if (e.submitter.dataset.id === 'cancel') {
     closeModal(modalBox);
     form.reset();
@@ -86,7 +88,7 @@ function renderData(item) {
   item.map((element) => {
     tbody.insertAdjacentHTML(
       'beforeend',
-      `<tr id=${element.id} class="text-center border">
+      `<tr id=${element.id} class="text-center border h-full w-full ">
               <td class="border-l-2 border-b-2 py-4">${element.taskInput}</td>
               <td class="border-l-2 border-b-2">
               <span
@@ -106,9 +108,9 @@ function renderData(item) {
       ${element.statusInput}
       </span>
       </td>
-      <td class=" border ">${element.deadlineInput}</td>
-      <td class="border">
-
+      <td class=" border">${element.deadlineInput}</td>
+      <td class=" border  ">
+      <div class="flex flex-col md:block items-center justify-center p-2 gap-1">
       <button class="bg-red-600 px-1 rounded" 
       data-name='delete'
        data-id="${element.id}">
@@ -138,25 +140,27 @@ function renderData(item) {
         ></ion-icon>
         </button>
         </td>
+        </div>
         </tr>
         `
     );
   });
 }
-pagination()
+//first time
+pagination();
 
 function handlePriority(item) {
   return item === 'High'
     ? 'bg-red-500 text-white'
     : item === 'Medium'
-    ? 'bg-yellow-400 '
+    ? 'bg-yellow-300 '
     : 'bg-gray-300';
 }
 function handleStatus(item) {
   return item === 'Todo'
     ? 'bg-red-500 '
     : item === 'Doing'
-    ? 'bg-yellow-400 text-black'
+    ? 'bg-yellow-300 text-black'
     : 'bg-green-400';
 }
 tbody.addEventListener('click', (e) => {
@@ -166,37 +170,14 @@ tbody.addEventListener('click', (e) => {
     : e.target.dataset.name === 'edit'
     ? edit(target)
     : target.dataset.name === 'eye'
-    ? console.log('eye')
+    ? disableForm(target)
     : null;
 });
 function handleDelete(target) {
   const targetID = +target.dataset.id;
   deleteData(BASE_URL, 'users', targetID);
-  database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+  database = getData(BASE_URL, `users?_page=${page}&_limit=5`);
   pagination();
-  // database = database
-  //   .then((resolve) => {
-  //     return resolve.filter((item) => item.id !== targetID);
-  //   })
-  //   .then((response) => {
-  //     renderData(response);
-  //     return response;
-  //   });
-  // deleteData(BASE_URL, 'users', targetID);
-  // database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
-  // database = database
-  //   .then((resolve) => {
-  //     return resolve.filter((item) => item.id !== targetID);
-  //   })
-  //   .then((response) => {
-  //     renderData(response);
-  //     return response;
-  //   });
-
-  // database = database.then((response) => {
-  //   return response.filter((item) => item.id !== targetID);
-  // });
-  // database.then((response) => renderData(response));
 }
 function edit(target) {
   active = +target.dataset.id;
@@ -223,8 +204,26 @@ function handleEdit() {
   isEdit = true;
 }
 
+function disableForm(target) {
+  active = +target.dataset.id;
+  openModal(modalBox);
+  database
+    .then((response) => {
+      return response.find((item) => {
+        if (item.id === active) {
+          return item;
+        }
+      });
+    })
+    .then((response) => {
+      form.querySelector('#task-name').value = response.taskInput;
+      form.querySelector('#priority').value = response.priorityInput;
+      form.querySelector('#status').value = response.statusInput;
+      form.querySelector('#deadline').value = response.deadlineInput;
+      form.querySelector('#textarea').value = response.desc;
+    });
+}
 // API
-
 async function post(URL, endpoint, item) {
   try {
     let data = await fetch(`${URL}/${endpoint}`, {
@@ -278,13 +277,12 @@ async function deleteData(URL, endpoint, id) {
 function searchInput(e) {
   let value = e.target.value;
   console.log(value);
- if( value != ""){
-   database = getData(BASE_URL, `users?q=${value}`).then((response) => {
-     renderData(response);
-     return response;
-   })
-  }
-  else pagination()
+  if (value != '') {
+    database = getData(BASE_URL, `users?q=${value}`).then((response) => {
+      renderData(response);
+      return response;
+    });
+  } else pagination();
 }
 search.addEventListener('keyup', debounce(searchInput, 1000));
 
@@ -301,7 +299,7 @@ paginate.addEventListener('click', (e) => {
 function nextPage() {
   page = ++page;
   openModal(loading);
-  database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+  database = getData(BASE_URL, `users?_page=${page}&_limit=5`);
   database.then((response) => {
     renderData(response);
     closeModal(loading);
@@ -311,7 +309,7 @@ function nextPage() {
 function previousPage() {
   page > 1 ? (page = --page) : page;
   openModal(loading);
-  database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+  database = getData(BASE_URL, `users?_page=${page}&_limit=5`);
   database.then((response) => {
     renderData(response);
     closeModal(loading);
@@ -320,12 +318,33 @@ function previousPage() {
 }
 function pagination() {
   openModal(loading);
-  database = getData(BASE_URL, `users?_page=${page}&_limit=3`);
+  database = getData(BASE_URL, `users?_page=${page}&_limit=5`);
   database.then((response) => {
     renderData(response);
     closeModal(loading);
     return response;
   });
 }
-// GET /posts?_page=7
-// GET /posts?_page=7&_limit=20
+
+//filter
+function handleFilter(e) {
+  const targetf = e.target;
+  targetf.dataset.close ? closeModal(filter) : filterData(e);
+}
+function filterData() {
+  const [priority, status, deadline] = Array.from(
+    filter.querySelectorAll('[data-value]')
+  );
+  let Url = '';
+  priority.value !== 'All'
+    ? (Url += `&priorityInput=${priority.value}`)
+    : status.value !== 'All'
+    ? (Url += `&statusInput=${status.value}`)
+    : deadline.value !== ''
+    ? (Url += `&deadlineInput=${deadline.value}`)
+    : null;
+  getData(BASE_URL, `users?${Url}`).then((response) => {
+    renderData(response);
+  });
+}
+filter.addEventListener('click', handleFilter);
