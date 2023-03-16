@@ -336,13 +336,16 @@ function filterData() {
     filter.querySelectorAll('[data-value]')
   );
   let Url = '';
-  priority.value !== 'All'
-    ? (Url += `&priorityInput=${priority.value}`)
-    : status.value !== 'All'
-    ? (Url += `&statusInput=${status.value}`)
-    : deadline.value !== ''
-    ? (Url += `&deadlineInput=${deadline.value}`)
-    : null;
+
+  if (priority.value !== 'All') {
+    Url += `&priorityInput=${priority.value}`;
+  }
+  if (status.value !== 'All') {
+    Url += `&statusInput=${status.value}`;
+  }
+  if (deadline.value !== '') {
+    Url += `&deadlineInput=${deadline.value}`;
+  }
   getData(BASE_URL, `users?${Url}`).then((response) => {
     renderData(response);
   });
